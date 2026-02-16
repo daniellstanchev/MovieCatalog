@@ -1,0 +1,28 @@
+﻿@model MoviesCatalog.Models.Movie
+
+@{
+    ViewData["Title"] = "Изтрий филм";
+}
+
+<h1>Сигурни ли сте?</h1>
+
+<div class="alert alert-danger">
+    <h4>Искате да изтриете този филм?</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Заглавие</dt>
+        <dd class="col-sm-9">@Model.Title</dd>
+
+        <dt class="col-sm-3">Година</dt>
+        <dd class="col-sm-9">@Model.ReleaseYear</dd>
+
+        <dt class="col-sm-3">Жанр</dt>
+        <dd class="col-sm-9">@Model.Genre?.Name</dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Изтрий</button>
+        <a asp-action="Index" class="btn btn-secondary">Назад</a>
+    </form>
+</div>
