@@ -24,11 +24,11 @@ ASP.NET Core MVC project for managing a movie catalog.
 5. Press F5 to run
 
 ## Project Structure
-Controllers/ - MVC controllers
-Models/ - Entity classes
-Views/ - Razor views
-Data/ - DbContext
-wwwroot/ - Static files
+- Controllers/ - MVC controllers
+- Models/ - Entity classes
+- Views/ - Razor views
+- Data/ - DbContext
+- wwwroot/ - Static files
 
 ## Author
 Daniel Stanchev
