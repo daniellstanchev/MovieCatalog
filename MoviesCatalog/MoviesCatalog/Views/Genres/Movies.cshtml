@@ -1,0 +1,138 @@
+﻿@model MoviesCatalog.Models.Genre
+
+@{
+    ViewData["Title"] = $"{Model.Name} Movies";
+}
+
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh;">
+    <div class="container">
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill mb-4 px-4 py-2">
+            <i class="bi bi-arrow-left me-2"></i>Back to Genres
+        </a>
+        <div class="text-center mb-5">
+            <div class="d-inline-block p-4 rounded-circle mb-4" style="background: linear-gradient(135deg, @GetGenreColor(Model.Name), @GetGenreColor2(Model.Name)); width: 120px; height: 120px;">
+                <i class="bi @GetGenreIcon(Model.Name)" style="font-size: 4rem; color: white; line-height: 120px;"></i>
+            </div>
+            <h1 class="display-3 fw-bold mb-3" style="color: #2c3e50;">@Model.Name</h1>
+            <p class="lead text-muted">@(Model.Movies?.Count() ?? 0) movies in this genre</p>
+        </div>
+
+        @if (Model.Movies != null && Model.Movies.Any())
+        {
+            <div class="row g-4">
+                @foreach (var movie in Model.Movies)
+                {
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 border-0 shadow-lg" style="border-radius: 25px; overflow: hidden; transition: all 0.3s;">
+                            <div style="height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative;">
+                                <div style="position: absolute; bottom: 20px; left: 20px; color: white;">
+                                    <h3 class="fw-bold mb-2">@movie.Title</h3>
+                                    <span class="badge bg-light text-dark px-3 py-2">
+                                        <i class="bi bi-calendar me-2"></i>@movie.ReleaseYear
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="card-body p-4">
+                                <p class="card-text text-muted mb-4" style="line-height: 1.6;">
+                                    @(movie.Description?.Length > 150 ? movie.Description.Substring(0, 150) + "..." : movie.Description ?? "No description available.")
+                                </p>
+
+                                @if (movie.MovieActors != null && movie.MovieActors.Any())
+                                {
+                                    <div class="mb-4">
+                                        <small class="text-uppercase fw-bold text-secondary mb-2 d-block">Cast</small>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @foreach (var ma in movie.MovieActors.Take(3))
+                                            {
+                                                <span class="badge bg-light text-dark px-3 py-2 rounded-pill border">
+                                                    @ma.Actor?.Name
+                                                </span>
+                                            }
+                                            @if (movie.MovieActors.Count > 3)
+                                            {
+                                                <span class="badge bg-light text-dark px-3 py-2 rounded-pill border">+@(movie.MovieActors.Count - 3)</span>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="card-footer bg-transparent border-0 p-4 pt-0">
+                                <a asp-controller="Movies" asp-action="Details" asp-route-id="@movie.Id"
+                                   class="btn btn-primary rounded-pill w-100 py-3"
+                                   style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                    <i class="bi bi-info-circle me-2"></i>View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <div class="display-1 text-muted mb-4">
+                    <i class="bi bi-camera-reels"></i>
+                </div>
+                <h3 class="text-muted">No movies in this genre yet</h3>
+                <p class="text-secondary mt-3">Check back later for new releases!</p>
+            </div>
+        }
+    </div>
+</div>
+
+@functions {
+    string GetGenreColor(string genre)
+    {
+        return genre switch
+        {
+            "Action" => "#ff6b6b",
+            "Comedy" => "#feca57",
+            "Drama" => "#54a0ff",
+            "Sci-Fi" => "#5f27cd",
+            "Horror" => "#222f3e",
+            "Romance" => "#ff9ff3",
+            "Thriller" => "#10ac84",
+            _ => "#667eea"
+        };
+    }
+
+    string GetGenreColor2(string genre)
+    {
+        return genre switch
+        {
+            "Action" => "#ee5253",
+            "Comedy" => "#ff9f43",
+            "Drama" => "#2e86de",
+            "Sci-Fi" => "#341f97",
+            "Horror" => "#2c3e50",
+            "Romance" => "#f368e0",
+            "Thriller" => "#1dd1a1",
+            _ => "#764ba2"
+        };
+    }
+
+    string GetGenreIcon(string genre)
+    {
+        return genre switch
+        {
+            "Action" => "bi-shield-shaded",
+            "Comedy" => "bi-emoji-laughing",
+            "Drama" => "bi-mask",
+            "Sci-Fi" => "bi-rocket-takeoff",
+            "Horror" => "bi-emoji-dizzy",
+            "Romance" => "bi-heart-fill",
+            "Thriller" => "bi-exclamation-triangle",
+            _ => "bi-camera-reels"
+        };
+    }
+}
+
+<style>
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+    }
+</style>

@@ -1,0 +1,99 @@
+﻿@model IEnumerable<MoviesCatalog.Models.Actor>
+
+@{
+    ViewData["Title"] = "Actors";
+}
+
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h1 class="display-4 fw-bold mb-3" style="background: linear-gradient(135deg, #3498db, #9b59b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    Actors
+                </h1>
+                <p class="lead text-muted">Meet the talented cast</p>
+            </div>
+            <a asp-action="Create" class="btn btn-primary btn-lg rounded-pill px-5 py-3"
+               style="background: linear-gradient(135deg, #3498db, #9b59b6); border: none;">
+                <i class="bi bi-plus-circle me-2"></i>Add New Actor
+            </a>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show rounded-pill mb-4" role="alert">
+                @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="row g-4">
+            @foreach (var actor in Model)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 border-0 shadow-lg" style="border-radius: 25px; overflow: hidden; transition: all 0.3s;">
+                        <div style="height: 200px; background: linear-gradient(135deg, #3498db, #9b59b6); display: flex; align-items: center; justify-content: center;">
+                            <span style="font-size: 6rem; color: white; font-weight: 300; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                                @actor.Name.Substring(0, 1)
+                            </span>
+                        </div>
+
+                        <div class="card-body p-4">
+                            <h3 class="fw-bold mb-3" style="color: #2c3e50;">@actor.Name</h3>
+
+                            @if (actor.BirthDate != null)
+                            {
+                                <p class="text-muted mb-3">
+                                    <i class="bi bi-calendar3 me-2"></i>Born: @actor.BirthDate.Value.ToString("MMMM dd, yyyy")
+                                </p>
+                            }
+
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-bold text-dark">Movies:</span>
+                                    <span class="badge bg-primary rounded-pill px-3 py-2">@(actor.MovieActors?.Count ?? 0)</span>
+                                </div>
+
+                                @if (actor.MovieActors != null && actor.MovieActors.Any())
+                                {
+                                    <div class="mt-2">
+                                        @foreach (var ma in actor.MovieActors.Take(3))
+                                        {
+                                            <span class="badge bg-light text-dark me-1 mb-1 px-3 py-2">@ma.Movie?.Title</span>
+                                        }
+                                        @if (actor.MovieActors.Count > 3)
+                                        {
+                                            <span class="badge bg-secondary">+@(actor.MovieActors.Count - 3)</span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p class="text-muted small">No movies yet</p>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-transparent border-0 p-4 pt-0">
+                            <div class="d-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@actor.Id" class="btn btn-outline-info rounded-pill flex-fill py-2">
+                                    <i class="bi bi-info-circle me-1"></i>Details
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@actor.Id" class="btn btn-outline-danger rounded-pill flex-fill py-2">
+                                    <i class="bi bi-trash me-1"></i>Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+    }
+</style>

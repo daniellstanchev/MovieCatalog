@@ -1,0 +1,66 @@
+﻿@model MoviesCatalog.Models.Actor
+
+@{
+    ViewData["Title"] = "Delete Actor";
+}
+
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card border-0 shadow-lg" style="border-radius: 30px; overflow: hidden;">
+                    <div style="height: 150px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%); position: relative;">
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                            <i class="bi bi-exclamation-triangle-fill" style="font-size: 4rem; color: white;"></i>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-5 text-center">
+                        <h2 class="fw-bold mb-4" style="color: #2c3e50;">Are you sure?</h2>
+                        <p class="lead mb-5">You are about to delete actor <strong class="text-danger">@Model.Name</strong>.</p>
+
+                        <div class="bg-light p-4 rounded-4 mb-5 text-start">
+                            <h5 class="fw-bold mb-3">Actor Details:</h5>
+                            <p><strong>Name:</strong> @Model.Name</p>
+                            @if (Model.BirthDate != null)
+                            {
+                                <p><strong>Birth Date:</strong> @Model.BirthDate.Value.ToString("MMMM dd, yyyy")</p>
+                            }
+
+                            @if (Model.MovieActors != null && Model.MovieActors.Any())
+                            {
+                                <p><strong>Movies:</strong> @Model.MovieActors.Count</p>
+                                <div class="mt-2">
+                                    @foreach (var ma in Model.MovieActors)
+                                    {
+                                        <span class="badge bg-secondary me-1">@ma.Movie?.Title</span>
+                                    }
+                                </div>
+                                <div class="alert alert-warning mt-3">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    This actor is in @Model.MovieActors.Count movie(s). Deleting will also remove them from these movies.
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No movies associated with this actor.</p>
+                            }
+                        </div>
+
+                        <form asp-action="Delete">
+                            <input type="hidden" asp-for="Id" />
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-danger btn-lg rounded-pill px-5 py-3 flex-fill">
+                                    <i class="bi bi-trash me-2"></i>Yes, Delete
+                                </button>
+                                <a asp-action="Index" class="btn btn-outline-secondary btn-lg rounded-pill px-5 py-3 flex-fill">
+                                    <i class="bi bi-arrow-left me-2"></i>No, Go Back
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,137 @@
+﻿@model IEnumerable<MoviesCatalog.Models.Movie>
+
+@{
+    ViewData["Title"] = "Movies";
+}
+
+<div class="container-fluid px-4 py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="display-3 fw-bold mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: fadeInDown 1s;">
+                Movie Catalog
+            </h1>
+            <p class="lead text-muted mb-4" style="animation: fadeInUp 1s;">Discover amazing movies and create your watchlist</p>
+
+            <a asp-action="Create" class="btn btn-lg rounded-pill px-5 py-3"
+               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); animation: fadeInUp 1.2s;">
+                <i class="bi bi-plus-circle me-2"></i>Add New Movie
+            </a>
+        </div>
+        <div class="row g-4" id="moviesGrid">
+            @foreach (var item in Model)
+            {
+                <div class="col-xl-3 col-lg-4 col-md-6 movie-item">
+                    <div class="card h-100 border-0 shadow-lg" style="border-radius: 25px; overflow: hidden; transition: all 0.3s; animation: fadeIn 0.5s;">
+                        <div style="height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative;">
+                            <div style="position: absolute; top: 20px; right: 20px;">
+                                <span class="badge bg-white text-dark px-3 py-2 rounded-pill shadow-sm">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>4.5
+                                </span>
+                            </div>
+                            <div style="position: absolute; bottom: 20px; left: 20px; color: white;">
+                                <h3 class="fw-bold mb-2" style="font-size: 1.5rem;">@item.Title</h3>
+                                <span class="badge bg-danger me-2">@item.ReleaseYear</span>
+                                <span class="badge bg-info">@item.Genre?.Name</span>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-4">
+                            <p class="card-text text-muted mb-4" style="line-height: 1.6;">
+                                @(item.Description?.Length > 120 ? item.Description.Substring(0, 120) + "..." : item.Description ?? "No description available.")
+                            </p>
+
+                            @if (item.MovieActors != null && item.MovieActors.Any())
+                            {
+                                <div class="mb-4">
+                                    <small class="text-uppercase fw-bold text-secondary mb-2 d-block">Cast</small>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach (var ma in item.MovieActors.Take(3))
+                                        {
+                                            <a asp-controller="Actors" asp-action="Details" asp-route-id="@ma.ActorId"
+                                               class="text-decoration-none">
+                                                <span class="badge bg-light text-dark px-3 py-2 rounded-pill border"
+                                                      style="transition: all 0.2s;">
+                                                    <i class="bi bi-person-circle me-1"></i>@ma.Actor?.Name
+                                                </span>
+                                            </a>
+                                        }
+                                        @if (item.MovieActors.Count > 3)
+                                        {
+                                            <span class="badge bg-light text-dark px-3 py-2 rounded-pill border">+@(item.MovieActors.Count - 3)</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="card-footer bg-transparent border-0 p-4 pt-0">
+                            <div class="d-flex gap-2">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning rounded-pill flex-fill py-2"
+                                   style="border-width: 2px;">
+                                    <i class="bi bi-pencil-square me-1"></i>Edit
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info rounded-pill flex-fill py-2"
+                                   style="border-width: 2px;">
+                                    <i class="bi bi-info-circle me-1"></i>Details
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger rounded-pill flex-fill py-2"
+                                   style="border-width: 2px;">
+                                    <i class="bi bi-trash me-1"></i>Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<style>
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 30px 40px rgba(102, 126, 234, 0.3) !important;
+    }
+
+    .badge:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        transform: scale(1.05);
+        cursor: pointer;
+    }
+</style>
