@@ -1,0 +1,129 @@
+﻿@model MoviesCatalog.Models.Movie
+
+@{
+    ViewData["Title"] = "Add New Movie";
+}
+
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card border-0 shadow-lg" style="border-radius: 30px; overflow: hidden;">
+                    <div style="height: 150px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative;">
+                        <div style="position: absolute; bottom: -30px; left: 40px;">
+                            <div style="width: 80px; height: 80px; background: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                                <i class="bi bi-film" style="font-size: 3rem; color: #667eea;"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-5">
+                        <h2 class="fw-bold mb-4" style="color: #2c3e50; margin-left: 100px;">
+                            Add New Movie
+                        </h2>
+
+                        <form asp-action="Create" method="post">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3" role="alert"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm mb-4">
+                                        <div class="card-header bg-transparent border-0 pt-3">
+                                            <h5 class="fw-bold"><i class="bi bi-info-circle me-2 text-primary"></i>Movie Details</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label asp-for="Title" class="form-label fw-bold">Title</label>
+                                                <input asp-for="Title" class="form-control rounded-pill" placeholder="e.g., Inception" />
+                                                <span asp-validation-for="Title" class="text-danger"></span>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label asp-for="ReleaseYear" class="form-label fw-bold">Release Year</label>
+                                                    <input asp-for="ReleaseYear" class="form-control rounded-pill" value="2024" />
+                                                    <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label asp-for="GenreId" class="form-label fw-bold">Genre</label>
+                                                    <select asp-for="GenreId" class="form-select rounded-pill" asp-items="ViewBag.GenreId">
+                                                        <option value="">Select Genre</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label asp-for="Description" class="form-label fw-bold">Description</label>
+                                                <textarea asp-for="Description" class="form-control rounded-4" rows="4" placeholder="Movie description..."></textarea>
+                                                <span asp-validation-for="Description" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm mb-4">
+                                        <div class="card-header bg-transparent border-0 pt-3">
+                                            <h5 class="fw-bold"><i class="bi bi-people-fill me-2 text-primary"></i>Cast</h5>
+                                        </div>
+                                        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                                            @if (ViewBag.AllActors != null)
+                                            {
+                                                var actors = ViewBag.AllActors as IEnumerable<MoviesCatalog.Models.Actor>;
+                                                if (actors != null && actors.Any())
+                                                {
+                                                    @foreach (var actor in actors)
+                                                    {
+                                                        <div class="form-check mb-2 p-2 rounded-3" style="border: 1px solid #e0e0e0;">
+                                                            <input class="form-check-input" type="checkbox" name="SelectedActorIds" value="@actor.Id" id="actor_@actor.Id">
+                                                            <label class="form-check-label w-100" for="actor_@actor.Id">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <div>
+                                                                        <strong>@actor.Name</strong>
+                                                                        @if (actor.BirthDate.HasValue)
+                                                                        {
+                                                                            <br />
+
+                                                                            <small class="text-muted">Born: @actor.BirthDate.Value.Year</small>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <p class="text-muted text-center py-4">No actors available. <a asp-controller="Actors" asp-action="Create">Add some first!</a></p>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <p class="text-muted text-center py-4">No actors available. <a asp-controller="Actors" asp-action="Create">Add some first!</a></p>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 py-3 flex-fill"
+                                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                    <i class="bi bi-check-circle me-2"></i>Create Movie
+                                </button>
+                                <a asp-action="Index" class="btn btn-outline-secondary btn-lg rounded-pill px-5 py-3 flex-fill">
+                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

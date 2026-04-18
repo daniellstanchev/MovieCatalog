@@ -1,0 +1,119 @@
+﻿@model IEnumerable<MoviesCatalog.Models.Genre>
+
+@{
+    ViewData["Title"] = "Movie Genres";
+}
+
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="display-3 fw-bold mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                Movie Genres
+            </h1>
+            <p class="lead text-muted">Browse movies by your favorite genre</p>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var genre in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <a asp-action="Movies" asp-route-id="@genre.Id" class="text-decoration-none">
+                        <div class="card h-100 border-0 shadow-lg" style="border-radius: 25px; overflow: hidden; transition: all 0.3s;">
+                            <div style="height: 180px; background: linear-gradient(135deg, @GetGenreColor(genre.Name), @GetGenreColor2(genre.Name));
+                                      display: flex; align-items: center; justify-content: center; text-align: center;">
+                                <i class="bi @GetGenreIcon(genre.Name)" style="font-size: 5rem; color: white; line-height: 1; display: block;"></i>
+                            </div>
+
+                            <div class="card-body text-center p-4">
+                                <h3 class="fw-bold mb-3" style="color: #2c3e50; font-size: 2rem;">@genre.Name</h3>
+
+                                @if (genre.Movies != null && genre.Movies.Any())
+                                {
+                                    <div class="mt-3">
+                                        <span class="badge bg-primary rounded-pill px-4 py-3 fs-6">
+                                            <i class="bi bi-film me-2"></i>@genre.Movies.Count() Movie@(genre.Movies.Count() != 1 ? "s" : "")
+                                        </span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="mt-3">
+                                        <span class="badge bg-secondary rounded-pill px-4 py-3 fs-6">
+                                            <i class="bi bi-film me-2"></i>0 Movies
+                                        </span>
+                                    </div>
+                                }
+
+                                <div class="mt-4">
+                                    <span class="btn rounded-pill px-4 py-2"
+                                          style="background: linear-gradient(135deg, @GetGenreColor(genre.Name), @GetGenreColor2(genre.Name));
+                                                 color: white; border: none;">
+                                        Browse @genre.Name Movies <i class="bi bi-arrow-right ms-2"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetGenreColor(string genre)
+    {
+        return genre switch
+        {
+            "Action" => "#ff6b6b",
+            "Comedy" => "#feca57",
+            "Drama" => "#54a0ff",
+            "Sci-Fi" => "#5f27cd",
+            "Horror" => "#222f3e",
+            "Romance" => "#ff9ff3",
+            "Thriller" => "#10ac84",
+            _ => "#667eea"
+        };
+    }
+
+    string GetGenreColor2(string genre)
+    {
+        return genre switch
+        {
+            "Action" => "#ee5253",
+            "Comedy" => "#ff9f43",
+            "Drama" => "#2e86de",
+            "Sci-Fi" => "#341f97",
+            "Horror" => "#2c3e50",
+            "Romance" => "#f368e0",
+            "Thriller" => "#1dd1a1",
+            _ => "#764ba2"
+        };
+    }
+
+    string GetGenreIcon(string genre)
+    {
+        return genre switch
+        {
+            "Action" => "bi-shield-shaded",
+            "Comedy" => "bi-emoji-laughing",
+            "Drama" => "bi-mask",
+            "Sci-Fi" => "bi-rocket-takeoff",
+            "Horror" => "bi-emoji-dizzy",
+            "Romance" => "bi-heart-fill",
+            "Thriller" => "bi-exclamation-triangle",
+            _ => "bi-camera-reels"
+        };
+    }
+}
+
+<style>
+    .card:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 30px 40px rgba(0,0,0,0.2) !important;
+    }
+
+    .card {
+        cursor: pointer;
+    }
+</style>

@@ -1,0 +1,139 @@
+﻿@model MoviesCatalog.Models.Movie
+
+@{
+    ViewData["Title"] = $"{Model.Title} - Movie Details";
+}
+
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh;">
+    <div class="container">
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill mb-4 px-4 py-2">
+            <i class="bi bi-arrow-left me-2"></i>Back to Movies
+        </a>
+
+        <div class="card border-0 shadow-lg" style="border-radius: 30px; overflow: hidden;">
+            <div style="height: 400px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative;">
+                <div style="position: absolute; bottom: 40px; left: 40px; color: white;">
+                    <h1 class="display-3 fw-bold mb-3">@Model.Title</h1>
+                    <div class="d-flex gap-3">
+                        <span class="badge bg-light text-dark px-4 py-3 rounded-pill fs-6">
+                            <i class="bi bi-calendar me-2"></i>@Model.ReleaseYear
+                        </span>
+                        <span class="badge bg-danger px-4 py-3 rounded-pill fs-6">
+                            <i class="bi bi-tag me-2"></i>@Model.Genre?.Name
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-5">
+                <div class="row">
+                    <div class="col-lg-8 mb-4">
+                        <h3 class="fw-bold mb-4" style="color: #2c3e50;">
+                            <i class="bi bi-film me-2" style="color: #667eea;"></i>
+                            About the Movie
+                        </h3>
+                        <p class="lead" style="line-height: 1.8; font-size: 1.2rem; color: #34495e;">
+                            @Model.Description
+                        </p>
+
+                        <div class="row mt-5 g-4">
+                            <div class="col-md-4">
+                                <div class="card bg-light border-0" style="border-radius: 20px;">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-star-fill text-warning display-4 mb-3"></i>
+                                        <h4 class="fw-bold mb-0">4.5</h4>
+                                        <small class="text-muted">Rating</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light border-0" style="border-radius: 20px;">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-people-fill text-primary display-4 mb-3"></i>
+                                        <h4 class="fw-bold mb-0">@(Model.MovieActors?.Count ?? 0)</h4>
+                                        <small class="text-muted">Cast</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light border-0" style="border-radius: 20px;">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-clock-history text-success display-4 mb-3"></i>
+                                        <h4 class="fw-bold mb-0">148 min</h4>
+                                        <small class="text-muted">Duration</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm" style="border-radius: 20px;">
+                            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                                <h3 class="fw-bold mb-0" style="color: #2c3e50;">
+                                    <i class="bi bi-people-fill me-2" style="color: #764ba2;"></i>
+                                    Cast
+                                </h3>
+                            </div>
+                            <div class="card-body p-4">
+                                @if (Model.MovieActors != null && Model.MovieActors.Any())
+                                {
+                                    @foreach (var ma in Model.MovieActors.OrderBy(ma => ma.Actor?.Name))
+                                    {
+                                        <a asp-controller="Actors" asp-action="Details" asp-route-id="@ma.ActorId"
+                                           class="text-decoration-none">
+                                            <div class="d-flex align-items-center mb-3 p-3 rounded-3"
+                                                 style="transition: all 0.3s; background: linear-gradient(135deg, #f8f9fa, #ffffff);">
+                                                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                                    <span style="color: white; font-weight: bold; font-size: 1.4rem;">
+                                                        @ma.Actor?.Name.Substring(0, 1)
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span class="fw-bold d-block" style="color: #2c3e50;">@ma.Actor?.Name</span>
+                                                    <small class="text-primary">View Profile →</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted text-center py-4">No cast information available.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer bg-transparent border-0 p-5 pt-0">
+                <div class="d-flex gap-3 justify-content-end">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-lg rounded-pill px-5 py-3">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Movie
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-lg rounded-pill px-5 py-3">
+                        <i class="bi bi-trash me-2"></i>Delete Movie
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .d-flex.align-items-center:hover {
+        transform: translateX(10px);
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        color: white !important;
+    }
+
+        .d-flex.align-items-center:hover span,
+        .d-flex.align-items-center:hover small {
+            color: white !important;
+        }
+
+    .card {
+        transition: transform 0.3s;
+    }
+</style>
