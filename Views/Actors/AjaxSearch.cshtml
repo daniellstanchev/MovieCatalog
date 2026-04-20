@@ -1,1 +1,195 @@
+@{
+    ViewData["Title"] = "Live Actor Search";
+}
 
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <i class="bi bi-mic display-1 text-white mb-3"></i>
+            <h1 class="display-3 fw-bold text-white mb-3">Live Actor Search</h1>
+            <p class="lead text-white-50">Start typing to find your favorite actors in real-time</p>
+        </div>
+
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-8">
+                <div class="input-group input-group-lg shadow-lg rounded-pill overflow-hidden" style="background: white;">
+                    <span class="input-group-text bg-white border-0 ps-4">
+                        <i class="bi bi-search" style="color: #667eea; font-size: 1.3rem;"></i>
+                    </span>
+                    <input type="text" id="searchInput" class="form-control border-0 py-4"
+                           placeholder="Type actor name (e.g., Tom, Brad, Leonardo)..."
+                           autocomplete="off"
+                           style="font-size: 1.1rem;">
+                    <span class="input-group-text bg-white border-0 pe-4" id="searchSpinner" style="display: none;">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                    </span>
+                </div>
+                <div class="text-center mt-2">
+                    <small class="text-white-50"><i class="bi bi-info-circle me-1"></i>Type at least 2 characters</small>
+                </div>
+            </div>
+        </div>
+
+        <div id="resultsContainer">
+            <div class="text-center text-white py-5" id="initialMessage">
+                <i class="bi bi-arrow-down-circle display-3"></i>
+                <h4 class="mt-3">Start typing to see results</h4>
+                <p class="text-white-50">Search for actors by name</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let searchTimeout;
+            const searchInput = $('#searchInput');
+            const resultsContainer = $('#resultsContainer');
+            const spinner = $('#searchSpinner');
+
+            searchInput.on('input', function() {
+                clearTimeout(searchTimeout);
+                const term = $(this).val();
+
+                if (term.length < 2) {
+                    showInitialMessage();
+                    return;
+                }
+
+                spinner.show();
+                searchTimeout = setTimeout(() => performSearch(term), 400);
+            });
+
+            function performSearch(term) {
+                $.ajax({
+                    url: '/Actors/SearchActorsJson',
+                    type: 'GET',
+                    data: { term: term },
+                    success: function(data) {
+                        spinner.hide();
+                        displayResults(data, term);
+                    },
+                    error: function(xhr, status, error) {
+                        spinner.hide();
+                        console.log("Error: " + error);
+                        showError();
+                    }
+                });
+            }
+
+            function displayResults(actors, searchTerm) {
+                if (!actors || actors.length === 0) {
+                    resultsContainer.html(`
+                        <div class="text-center text-white py-5">
+                            <i class="bi bi-emoji-frown display-3"></i>
+                            <h4 class="mt-3">No actors found for "${escapeHtml(searchTerm)}"</h4>
+                            <p class="text-white-50">Try a different name</p>
+                        </div>
+                    `);
+                    return;
+                }
+
+                let html = `
+                    <div class="text-center mb-4">
+                        <span class="badge bg-white text-primary rounded-pill px-4 py-3 fs-6 shadow-sm">
+                            <i class="bi bi-people-fill me-2"></i>Found ${actors.length} actor${actors.length !== 1 ? 's' : ''}
+                        </span>
+                    </div>
+                    <div class="row g-4">
+                `;
+
+                for (let i = 0; i < actors.length; i++) {
+                    const actor = actors[i];
+                    const birthYear = actor.birthDate ? new Date(actor.birthDate).getFullYear() : null;
+
+                    html += `
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card h-100 border-0 shadow-lg" style="border-radius: 25px; overflow: hidden; transition: transform 0.3s; animation: fadeInUp 0.4s ease-out;">
+                                <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px;">
+                                    <div class="text-center">
+                                        <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center"
+                                             style="width: 80px; height: 80px; margin-top: -40px;">
+                                            <i class="bi bi-person-circle" style="font-size: 3rem; color: #667eea;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body text-center p-4">
+                                    <h3 class="fw-bold mb-2" style="color: #2c3e50;">${escapeHtml(actor.name)}</h3>
+                                    ${birthYear ? `<p class="text-muted mb-3"><i class="bi bi-calendar3 me-2"></i>Born: ${birthYear}</p>` : ''}
+                                    <div class="mb-3">
+                                        <span class="badge bg-primary rounded-pill px-3 py-2">
+                                            <i class="bi bi-film me-1"></i>${actor.movieCount} Movies
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 p-4 pt-0">
+                                    <a href="/Actors/Details/${actor.id}" class="btn btn-primary rounded-pill w-100 py-2"
+                                       style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                        <i class="bi bi-info-circle me-2"></i>View Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+                resultsContainer.html(html);
+            }
+
+            function showInitialMessage() {
+                resultsContainer.html(`
+                    <div class="text-center text-white py-5" id="initialMessage">
+                        <i class="bi bi-arrow-down-circle display-3"></i>
+                        <h4 class="mt-3">Start typing to see results</h4>
+                        <p class="text-white-50">Search for actors by name</p>
+                    </div>
+                `);
+            }
+
+            function showError() {
+                resultsContainer.html(`
+                    <div class="text-center text-white py-5">
+                        <i class="bi bi-exclamation-triangle display-3"></i>
+                        <h4 class="mt-3">Something went wrong</h4>
+                        <p class="text-white-50">Please try again</p>
+                    </div>
+                `);
+            }
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
+            }
+        });
+    </script>
+}
+
+<style>
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 30px 40px rgba(0,0,0,0.2) !important;
+    }
+
+    input:focus {
+        outline: none;
+    }
+</style>
