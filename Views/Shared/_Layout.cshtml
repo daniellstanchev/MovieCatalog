@@ -33,7 +33,12 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Genres" asp-action="Index">Genres</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Movies" asp-action="Search">Search</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Movies" asp-action="Search">Search Movies</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Actors" asp-action="AjaxSearch">
+                                <i class="bi bi-mic me-1"></i>Search Actors
+                            </a>
                         </li>
                         @if (User.IsInRole("Admin"))
                         {
@@ -85,7 +90,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2026 - MoviesCatalog -
+            &copy; 2026 - MoviesCatalog
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
