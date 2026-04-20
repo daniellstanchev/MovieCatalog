@@ -1,0 +1,82 @@
+﻿@model IEnumerable<MoviesCatalog.Models.Movie>
+
+@{
+    ViewData["Title"] = "Home";
+}
+<div class="hero-section text-white text-center d-flex align-items-center justify-content-center"
+     style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/images/cinema-bg.jpg'); background-size: cover; background-position: center; height: 500px; margin-top: -20px;">
+    <div class="container">
+        <h1 class="display-3 fw-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Welcome to MovieCatalog</h1>
+        <p class="lead mb-4 fs-3">Discover your next favorite movie</p>
+        <a asp-controller="Movies" asp-action="Index" class="btn btn-danger btn-lg px-5 py-3 rounded-pill">
+            Browse Movies <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+    </div>
+</div>
+<div class="container my-5">
+    <h2 class="text-center mb-5" style="color: #2c3e50; font-weight: 300; font-size: 2.5rem;">
+        Featured <span style="border-bottom: 3px solid #e74c3c; padding-bottom: 5px;">Movies</span>
+    </h2>
+
+    <div class="row g-4">
+        @foreach (var movie in Model)
+        {
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-lg" style="border-radius: 20px; overflow: hidden; transition: transform 0.3s;">
+                    <div style="height: 10px; background: linear-gradient(90deg, #3498db, #e74c3c);"></div>
+
+                    <div class="card-body p-4">
+                        <h3 class="card-title fw-bold mb-3" style="color: #2c3e50;">@movie.Title</h3>
+
+                        <div class="mb-3">
+                            <span class="badge bg-primary me-2 px-3 py-2">@movie.ReleaseYear</span>
+                            <span class="badge bg-secondary px-3 py-2">@movie.Genre?.Name</span>
+                        </div>
+
+                        <p class="card-text text-secondary mb-4" style="line-height: 1.6;">
+                            @(movie.Description?.Length > 150 ? movie.Description.Substring(0, 150) + "..." : movie.Description ?? "No description available.")
+                        </p>
+
+                        @if (movie.MovieActors != null && movie.MovieActors.Any())
+                        {
+                            <p class="mb-3">
+                                <strong class="text-dark">Starring:</strong><br>
+                                @string.Join(", ", movie.MovieActors.Select(ma => ma.Actor?.Name).Take(3))
+                                @(movie.MovieActors.Count > 3 ? "..." : "")
+                            </p>
+                        }
+                    </div>
+
+                    <div class="card-footer bg-transparent border-0 p-4 pt-0">
+                        <a asp-controller="Movies" asp-action="Details" asp-route-id="@movie.Id"
+                           class="btn btn-outline-danger rounded-pill w-100 py-2"
+                           style="border-width: 2px; font-weight: 500;">
+                            View Details <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div class="bg-dark text-white py-5 mt-5">
+    <div class="container text-center">
+        <h2 class="display-5 mb-4">Ready to explore more?</h2>
+        <p class="lead mb-4">Browse our collection of movies by genre or check out your favorite actors</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a asp-controller="Genres" asp-action="Index" class="btn btn-outline-light btn-lg px-4">Browse Genres</a>
+            <a asp-controller="Movies" asp-action="Index" class="btn btn-danger btn-lg px-4">All Movies</a>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<style>
+    .card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+    }
+
+    .hero-section {
+        margin-bottom: 50px;
+    }
+</style>
