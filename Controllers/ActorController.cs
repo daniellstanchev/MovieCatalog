@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MoviesCatalog.Data;
 using MoviesCatalog.Models;
@@ -23,7 +23,31 @@ namespace MoviesCatalog.Controllers
                 .ToListAsync();
             return View(actors);
         }
+        public IActionResult AjaxSearch()
+        {
+            return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> SearchActorsJson(string term)
+        {
+            if (string.IsNullOrEmpty(term) || term.Length < 2)
+            {
+                return Json(new List<object>());
+            }
 
+            var actors = await _context.Actors
+                .Where(a => a.Name.Contains(term))
+                .Take(10)
+                .Select(a => new {
+                    a.Id,
+                    a.Name,
+                    a.BirthDate,
+                    MovieCount = a.MovieActors != null ? a.MovieActors.Count : 0
+                })
+                .ToListAsync();
+
+            return Json(actors);
+        }
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
