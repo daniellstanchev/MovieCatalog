@@ -24,5 +24,10 @@ namespace MoviesCatalog.Controllers
 
             return View(movies);
         }
+        public IActionResult PageNotFound()
+        {
+            Response.StatusCode = 404;
+            return View();
+        }
     }
 }
