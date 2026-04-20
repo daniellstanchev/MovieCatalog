@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MoviesCatalog.Data;
@@ -28,6 +28,28 @@ namespace MoviesCatalog.Controllers
                 .ToListAsync();
 
             return View(movies.ToPagedList(pageNumber, pageSize));
+        }
+        public async Task<IActionResult> Search(string searchTerm, int? page)
+        {
+            int pageNumber = page ?? 1;
+            int pageSize = 6;
+
+            var movies = _context.Movies
+                .Include(m => m.Genre)
+                .Include(m => m.MovieActors)
+                    .ThenInclude(ma => ma.Actor)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                movies = movies.Where(m => m.Title.Contains(searchTerm) ||
+                                            (m.Description != null && m.Description.Contains(searchTerm)));
+            }
+
+            var result = await movies.OrderByDescending(m => m.ReleaseYear).ToListAsync();
+
+            ViewBag.SearchTerm = searchTerm;
+            return View(result.ToPagedList(pageNumber, pageSize));
         }
         public async Task<IActionResult> Details(int? id)
         {
