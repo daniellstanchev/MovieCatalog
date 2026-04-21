@@ -1,0 +1,73 @@
+﻿@model MoviesCatalog.Models.Director
+
+@{
+    ViewData["Title"] = $"{Model.Name} - Director";
+}
+
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card border-0 shadow-lg" style="border-radius: 30px;">
+                    <div class="card-header text-white text-center py-4 rounded-top-4" style="background: linear-gradient(135deg, #2c3e50, #3498db);">
+                        <i class="bi bi-person-badge display-1"></i>
+                        <h2 class="mt-2">@Model.Name</h2>
+                        @if (!string.IsNullOrEmpty(Model.Country))
+                        {
+                            <p class="mb-0"><i class="bi bi-geo-alt me-2"></i>@Model.Country</p>
+                        }
+                    </div>
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <span class="badge bg-info rounded-pill px-4 py-3 fs-6">
+                                <i class="bi bi-film me-2"></i>@(Model.Movies?.Count ?? 0) Movies
+                            </span>
+                        </div>
+
+                        <h3 class="fw-bold mb-4">Filmography</h3>
+                        @if (Model.Movies != null && Model.Movies.Any())
+                        {
+                            <div class="list-group">
+                                @foreach (var movie in Model.Movies.OrderByDescending(m => m.ReleaseYear))
+                                {
+                                    <a asp-controller="Movies" asp-action="Details" asp-route-id="@movie.Id"
+                                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="bi bi-film me-2 text-primary"></i>
+                                            <strong>@movie.Title</strong>
+                                        </div>
+                                        <span class="badge bg-secondary rounded-pill">@movie.ReleaseYear</span>
+                                    </a>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-5">
+                                <i class="bi bi-camera-reels display-4 text-muted"></i>
+                                <p class="text-muted mt-3">No movies yet.</p>
+                            </div>
+                        }
+
+                        <div class="d-flex gap-3 mt-5">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-lg rounded-pill flex-fill">
+                                <i class="bi bi-pencil me-2"></i>Edit
+                            </a>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg rounded-pill flex-fill">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Directors
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .list-group-item:hover {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        transform: translateX(10px);
+        transition: all 0.2s;
+    }
+</style>
