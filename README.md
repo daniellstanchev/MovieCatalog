@@ -1,34 +1,68 @@
-# MoviesCatalog
+# 🎬 MoviesCatalog
 
-ASP.NET Core MVC project for managing a movie catalog.
+**MoviesCatalog** is a full-featured ASP.NET Core MVC web application for managing a movie catalog. Users can browse movies, view actor profiles, search by genre, leave reviews, and administrators have access to a dedicated admin panel for user and content management.
 
-## Features
-- Full CRUD operations for Movies, Actors, and Genres
-- Many-to-many relationship between Movies and Actors
+---
+
+## 📌 Features
+
+### 👤 Public Users
+- Browse movies with pagination
+- View movie details (cast, director, rating)
+- Search movies by title
+- Browse actors and view their filmography
 - Browse movies by genre
-- Actor profiles with filmography
-- Modern responsive UI with Bootstrap 5
+- View user reviews
 
-## Technologies
-- ASP.NET Core MVC (.NET 8)
-- Entity Framework Core
-- SQL Server LocalDB
-- Bootstrap 5
-- jQuery Validation
+### 🔐 Authenticated Users
+- Login/Logout with ASP.NET Core Identity
+- Leave and manage movie reviews
 
-## Setup Instructions
-1. Clone the repository
-2. Open in Visual Studio
-3. Update connection string in `appsettings.json` (if needed)
-4. Run `Update-Database` in Package Manager Console
-5. Press F5 to run
+### 👑 Admin Users
+- Full CRUD for Movies, Actors, Directors, Genres
+- Manage all user reviews
+- Manage user roles (Make/Remove Admin)
+- Dashboard with statistics
+- Admin Area isolated with MVC Areas
 
-## Project Structure
-- Controllers/ - MVC controllers
-- Models/ - Entity classes
-- Views/ - Razor views
-- Data/ - DbContext
-- wwwroot/ - Static files
+### ⚙️ Technical Features
+- AJAX live search for actors
+- Pagination for movie listings
+- 404 Not Found and 500 Error pages
+- Average rating calculation from reviews
+- Responsive design with Bootstrap 5
+- Server-side and client-side validation
+- AntiForgeryToken protection
+- XSS protection (HTML escaping)
 
-## Author
-Daniel Stanchev
+---
+
+## 🛠 Technologies
+
+| Technology | Version |
+|------------|---------|
+| ASP.NET Core MVC | .NET 8 |
+| Entity Framework Core | 8.0 |
+| SQL Server LocalDB | - |
+| Bootstrap 5 | 5.3 |
+| jQuery | 3.6 |
+| xUnit | 2.5 |
+| Moq | 4.20 |
+
+---
+
+## 📁 Project Structure
+MoviesCatalog/
+├── Areas/Admin/ # Admin Area (isolated)
+│ ├── Controllers/ # Admin controllers
+│ └── Views/ # Admin views
+├── Controllers/ # MVC Controllers
+├── Data/ # DbContext and seeding
+├── Migrations/ # EF Core migrations
+├── Models/ # Entity models
+├── Views/ # Razor views
+├── wwwroot/ # Static files (CSS, JS, libs)
+├── Program.cs # Application entry point
+├── appsettings.json # Configuration
+└── MoviesCatalog.csproj # Project file
+
